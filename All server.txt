@@ -1,0 +1,107 @@
+#!/bin/ksh
+# Housekeeping Script
+
+EXEC_START=$(date +%Y%m%d%H%M%S)
+JOB=$0
+APP=$1  # Application name
+SANDBOX=$2  # Sandbox path provided as argument
+
+# Validate the APP and SANDBOX parameters
+if [ -z "$APP" ] || [ -z "$SANDBOX" ]; then
+    echo "Error: Application name or sandbox path not provided."
+    echo "Usage: $0 <APP_NAME> <SANDBOX_PATH>"
+    exit 1
+fi
+
+# Check if running on DEV server
+HOSTNAME=$(hostname)
+
+if [ "$HOSTNAME" = "gbrssr4332" ]; then
+    user=$(whoami)
+    SANDBOX="/home/${user}/$2"
+else
+    SANDBOX=$2
+fi
+
+echo "Using sandbox for application [$APP]: $SANDBOX"
+
+# Load the environment setup from the provided sandbox
+if [ -f $SANDBOX/ab_project_setup.ksh ]; then
+    . $SANDBOX/ab_project_setup.ksh
+    STATUS_ENV=$?
+    if [ $STATUS_ENV -ne 0 ]; then
+        echo "Failed to load environment for [$APP]"
+        exit 1
+    fi
+else
+    echo "Environment setup file not found in $SANDBOX"
+    exit 1
+fi
+
+# Define log and config paths
+CURRENT_TIMESTAMP=$(date +%Y%m%d%H%M%S)
+CFGDIR=$AI_SERIAL_LOOKUP/${APP}
+FILECFGHKP="${APP}_hkp.cfg"
+LOGFILE=$AI_SERIAL_LOG/${APP}_housekeeping_${CURRENT_TIMESTAMP}.log
+
+echo "Housekeeping Start Time: $(date)" >> ${LOGFILE}
+
+# Process the housekeeping configuration
+if [ ! -f $CFGDIR/$FILECFGHKP ]; then
+    echo "Configuration file not found: $CFGDIR/$FILECFGHKP" >> ${LOGFILE}
+    exit 1
+fi
+
+cat $CFGDIR/$FILECFGHKP | while read line; do
+    DIR_NAME=$(echo $line | cut -d "|" -f2)
+    ABS_DIR_NAME=$(eval echo $DIR_NAME)
+    SEARCH_FILE_PATTERN=$(echo $line | cut -d "|" -f3)
+    RETENTION_PERIOD=$(echo $line | cut -d "|" -f4)
+    DEST_DIR=$(echo $line | cut -d "|" -f5)
+    ABS_DEST_DIR=$(eval echo $DEST_DIR)
+    ACT_TYPE=$(echo $line | cut -d "|" -f6)
+
+    if [ -z "$DIR_NAME" ] || [ -z "$SEARCH_FILE_PATTERN" ]; then
+        echo "Invalid configuration: $line" >> ${LOGFILE}
+        continue
+    fi
+
+    # Perform housekeeping actions (retention period = 0 should pick today's files)
+    if [ "$RETENTION_PERIOD" -gt 0 ]; then
+        FIND_CMD="find $ABS_DIR_NAME -maxdepth 1 -type f -name \"$SEARCH_FILE_PATTERN\" -mtime +$RETENTION_PERIOD"
+    else
+        FIND_CMD="find $ABS_DIR_NAME -maxdepth 1 -type f -name \"$SEARCH_FILE_PATTERN\" -mtime 0"
+    fi
+
+    eval $FIND_CMD | while read file_name; do
+        Housekeeping_Start_Time=$(date +%Y%m%d%H%M%S)
+
+        case $ACT_TYPE in
+            d) m_rm -f $file_name ;;
+            m) m_mv $file_name $ABS_DEST_DIR ;;
+            mz)
+                m_gzip $file_name
+                m_mv ${file_name}.gz $ABS_DEST_DIR
+                ;;
+            z)
+                cp $file_name ${AI_SERIAL_ARCH}
+                gzip ${AI_SERIAL_ARCH}/${file_name}
+                ;;
+            *)
+                echo "Invalid action type: $ACT_TYPE" >> ${LOGFILE}
+                continue
+                ;;
+        esac
+
+        if [ $? -eq 0 ]; then
+            Housekeeping_End_Time=$(date +%Y%m%d%H%M%S)
+            echo "$Housekeeping_Start_Time: $file_name: $DIR_NAME: $RETENTION_PERIOD: $ACT_TYPE: SUCCESS: $Housekeeping_End_Time" >> ${LOGFILE}
+        else
+            echo "Error processing file: $file_name" >> ${LOGFILE}
+        fi
+    done
+done
+
+echo "Log file path: ${LOGFILE}"
+echo "Execution Finished: $(date)"
+exit 0
