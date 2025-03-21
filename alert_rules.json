@@ -1,0 +1,5 @@
+{
+  "CRITICAL": ["Database Connection Timeout", "Job Failed", "Server Down"],
+  "MAJOR": ["ETL Job Delayed", "API Response Timeout"],
+  "MINOR": ["High Memory Usage", "Disk Space Low"]
+}
