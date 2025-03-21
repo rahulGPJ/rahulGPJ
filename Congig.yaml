@@ -1,0 +1,11 @@
+netcool:
+  api_url: "https://netcool-server/api/incidents"
+  api_key: "YOUR_NETCOOL_API_KEY"
+
+xmatters:
+  api_url: "https://xmatters-server/api/alerts"
+  api_key: "YOUR_XMATTERS_API_KEY"
+  group: "OnCall-Team"
+  escalation_time: 10  # Escalate after 10 minutes if no response
+
+log_file: "data_pipeline_logs.txt"
