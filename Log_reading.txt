@@ -1,0 +1,49 @@
+import re
+import os
+from collections import defaultdict
+
+# Define patterns for common issues
+ERROR_PATTERNS = {
+    "File Not Found": r"File not found: (\S+)",
+    "Database Connection Failed": r"Database connection failed: (\S+)",
+    "Permission Denied": r"Permission denied: (\S+)",
+    "Timeout Error": r"Timeout error occurred in (\S+)",
+    "Disk Space Full": r"Disk space full on (\S+)"
+}
+
+# Path to log files directory
+LOG_DIR = "/var/logs/data_pipeline/"
+
+# Function to read logs and identify issues
+def analyze_logs(log_dir):
+    issue_summary = defaultdict(list)
+    
+    for log_file in os.listdir(log_dir):
+        log_path = os.path.join(log_dir, log_file)
+        
+        if os.path.isfile(log_path) and log_file.endswith(".log"):
+            with open(log_path, "r", encoding="utf-8") as file:
+                for line in file:
+                    for issue, pattern in ERROR_PATTERNS.items():
+                        match = re.search(pattern, line)
+                        if match:
+                            issue_summary[issue].append(match.group(1))
+    
+    return issue_summary
+
+# Function to display results
+def generate_report(issue_summary):
+    print("\n---- Log Analysis Report ----")
+    for issue, occurrences in issue_summary.items():
+        print(f"\n⚠️ Issue Detected: {issue}")
+        for file_or_service in occurrences:
+            print(f"   - Affected: {file_or_service}")
+
+# Run the log analysis
+if __name__ == "__main__":
+    issues_found = analyze_logs(LOG_DIR)
+    
+    if issues_found:
+        generate_report(issues_found)
+    else:
+        print("✅ No major issues detected in logs.")
