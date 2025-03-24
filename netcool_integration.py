@@ -1,28 +1,21 @@
+# netcool_integration.py - Sends delay alerts to Netcool
 import requests
-import yaml
+from config import NETCOOL_API_URL
 
-# Load config
-with open("config.yaml", "r") as file:
-    config = yaml.safe_load(file)
-
-NETCOOL_API_URL = config["netcool"]["api_url"]
-NETCOOL_API_KEY = config["netcool"]["api_key"]
-
-def send_alert_to_netcool(severity, message):
-    """Sends an alert to Netcool and returns the incident ID."""
+def send_netcool_alert(batch_name, expected_time, actual_time, delay_percentage):
+    """Sends alert to Netcool API."""
     payload = {
-        "severity": severity,
-        "message": message,
-        "source": "SmartAlertingSystem"
+        "event_type": "BATCH_DELAY",
+        "batch_name": batch_name,
+        "expected_time": f"{expected_time:.2f} min",
+        "actual_time": f"{actual_time:.2f} min",
+        "delay_percentage": f"{delay_percentage:.2f}%",
+        "severity": "High"
     }
-    headers = {"Authorization": f"Bearer {NETCOOL_API_KEY}", "Content-Type": "application/json"}
-    
-    response = requests.post(NETCOOL_API_URL, json=payload, headers=headers)
 
+    response = requests.post(NETCOOL_API_URL, json=payload)
+    
     if response.status_code == 200:
-        incident_id = response.json().get("incident_id")
-        print(f"[Netcool] Alert Sent. Incident ID: {incident_id}")
-        return incident_id
+        print(f"✅ Netcool alert sent for {batch_name}")
     else:
-        print(f"[ERROR] Failed to send alert to Netcool: {response.text}")
-        return None
+        print(f"❌ Failed to send Netcool alert: {response.status_code}")
