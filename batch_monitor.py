@@ -1,35 +1,32 @@
-# batch_monitor.py - Identifies batch delays and sends alerts
-from datetime import datetime
-from config import BATCH_TIME_PER_10GB, ALERT_THRESHOLD_PERCENTAGE
+import yaml
+from datetime import timedelta
 from log_parser import extract_batch_details
-from netcool_integration import send_netcool_alert
-from email_notifier import send_email
 
-def calculate_expected_time(data_size_gb):
-    """Calculates expected batch execution time based on data size."""
-    return (data_size_gb / 10) * BATCH_TIME_PER_10GB
+with open("config/config.yaml", "r") as config_file:
+    config = yaml.safe_load(config_file)
 
-def detect_batch_delay(log_file):
-    """Checks batch delays and triggers alerts if needed."""
-    batch_data = extract_batch_details(log_file)
+def calculate_expected_time(data_size):
+    """Estimate batch processing time (5 mins per 10GB)."""
+    return (data_size / 10) * 5
 
-    for batch_name, details in batch_data.items():
-        if "end_time" in details:  # Ensure batch has completed
-            expected_time = calculate_expected_time(details["data_size"])
-            actual_time = details["actual_time"]
-            delay_percentage = ((actual_time - expected_time) / expected_time) * 100
+def classify_delay(batch_data):
+    """Classifies batch job delays as Minor, Major, or Critical."""
+    delay_results = {}
 
-            if delay_percentage > ALERT_THRESHOLD_PERCENTAGE:
-                alert_message = (
-                    f"Batch '{batch_name}' delayed!\n"
-                    f"Expected: {expected_time:.2f} min, Actual: {actual_time:.2f} min\n"
-                    f"Delay: {delay_percentage:.2f}%"
-                )
+    for batch, details in batch_data.items():
+        expected_time = calculate_expected_time(details["data_size"])
+        actual_time = details["actual_time"]
+        delay_percentage = ((actual_time - expected_time) / expected_time) * 100
 
-                print(alert_message)
-                
-                # Send alert to Netcool
-                send_netcool_alert(batch_name, expected_time, actual_time, delay_percentage)
+        if delay_percentage > config["ALERT_THRESHOLD"]["CRITICAL"]:
+            status = "CRITICAL"
+        elif delay_percentage > config["ALERT_THRESHOLD"]["MAJOR"]:
+            status = "MAJOR"
+        elif delay_percentage > config["ALERT_THRESHOLD"]["MINOR"]:
+            status = "MINOR"
+        else:
+            status = "NORMAL"
 
-                # Notify production team
-                send_email(batch_name, expected_time, actual_time, delay_percentage)
+        delay_results[batch] = {"delay_percentage": delay_percentage, "status": status}
+
+    return delay_results
