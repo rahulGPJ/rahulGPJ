@@ -1,0 +1,4 @@
+[2025-03-18 08:00:00] Job Started: Batch_A, Data Size: 50GB
+[2025-03-18 08:10:00] Job Completed: Batch_A, Time Taken: 12m 30s
+[2025-03-18 09:00:00] Job Started: Batch_B, Data Size: 30GB
+[2025-03-18 09:40:00] Job Completed: Batch_B, Time Taken: 45m 10s
