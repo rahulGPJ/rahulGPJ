@@ -1,11 +1,8 @@
-# log_parser.py - Parses logs to extract batch start time, end time, and data size
 import re
 from datetime import datetime
 
 def extract_batch_details(log_file):
-    """
-    Reads logs and extracts batch details (start time, end time, and data size).
-    """
+    """ Reads logs from TWS and extracts batch job details. """
     with open(log_file, 'r') as file:
         logs = file.readlines()
 
