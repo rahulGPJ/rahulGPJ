@@ -1,27 +1,16 @@
 from log_parser import extract_batch_details
-from batch_monitor import classify_delay
+from batch_monitor import analyze_batch_delays
 from netcool_integration import send_netcool_alert
 from xmatter_integration import escalate_xmatters_alert
-from email_notifier import send_email_notification
+from email_notifier import send_email
 
-LOG_FILE = "logs/tws_batch_logs.log"
+batch_data = extract_batch_details("logs/tws_batch_logs.log")
+alerts = analyze_batch_delays(batch_data)
 
-def main():
-    batch_data = extract_batch_details(LOG_FILE)
-    delay_results = classify_delay(batch_data)
-
-    for batch, details in delay_results.items():
-        delay_percentage = details["delay_percentage"]
-        status = details["status"]
-
-        if status == "CRITICAL":
-            escalate_xmatters_alert(batch, delay_percentage)
-            send_email_notification(batch, status, delay_percentage)
-        elif status == "MAJOR":
-            send_netcool_alert(batch, delay_percentage)
-            send_email_notification(batch, status, delay_percentage)
-        elif status == "MINOR":
-            print(f"[INFO] Minor delay detected for {batch}: {delay_percentage}%.")
-
-if __name__ == "__main__":
-    main()
+for severity, batch_name, delay_percentage in alerts:
+    if severity == "Critical":
+        escalate_xmatters_alert(batch_name, delay_percentage)
+    if severity == "Major":
+        send_netcool_alert(batch_name, delay_percentage)
+    
+    send_email(batch_name, severity, delay_percentage)
