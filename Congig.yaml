@@ -1,11 +1,12 @@
-netcool:
-  api_url: "https://netcool-server/api/incidents"
-  api_key: "YOUR_NETCOOL_API_KEY"
+TWS_LOG_PATH: "logs/tws_batch_logs.log"
 
-xmatters:
-  api_url: "https://xmatters-server/api/alerts"
-  api_key: "YOUR_XMATTERS_API_KEY"
-  group: "OnCall-Team"
-  escalation_time: 10  # Escalate after 10 minutes if no response
+ALERT_THRESHOLD:
+  MINOR: 10   # % delay
+  MAJOR: 20   # % delay → Netcool Alert
+  CRITICAL: 50 # % delay → xMatters Escalation
 
-log_file: "data_pipeline_logs.txt"
+EMAIL_SETTINGS:
+  SMTP_SERVER: "smtp.example.com"
+  SMTP_PORT: 587
+  SENDER_EMAIL: "alerts@example.com"
+  RECEIVER_EMAIL: "production_team@example.com"
