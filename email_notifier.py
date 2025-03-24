@@ -1,21 +1,17 @@
 import smtplib
-from email.mime.text import MIMEText
 import yaml
 
 with open("config/config.yaml", "r") as config_file:
     config = yaml.safe_load(config_file)
 
-def send_email_notification(batch_name, status, delay_percentage):
-    """Sends an email alert to the production team."""
-    subject = f"Batch Delay Alert: {batch_name} ({status})"
-    body = f"Batch {batch_name} is delayed by {delay_percentage}%. Please take action."
+def send_email(batch_name, severity, delay_percentage):
+    """Sends email notification to production team."""
+    subject = f"Batch Delay Alert: {batch_name} ({severity})"
+    body = f"The batch '{batch_name}' is delayed by {delay_percentage:.2f}%."
 
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = config["EMAIL_SETTINGS"]["SENDER_EMAIL"]
-    msg["To"] = config["EMAIL_SETTINGS"]["RECEIVER_EMAIL"]
+    message = f"Subject: {subject}\n\n{body}"
 
-    with smtplib.SMTP(config["EMAIL_SETTINGS"]["SMTP_SERVER"], config["EMAIL_SETTINGS"]["SMTP_PORT"]) as server:
-        server.sendmail(msg["From"], [msg["To"]], msg.as_string())
-
-    print(f"[Email] Notification sent for {batch_name} ({status}).")
+    with smtplib.SMTP(config["EMAIL"]["SMTP_SERVER"], config["EMAIL"]["PORT"]) as server:
+        server.starttls()
+        server.login(config["EMAIL"]["SENDER"], config["EMAIL"]["PASSWORD"])
+        server.sendmail(config["EMAIL"]["SENDER"], config["EMAIL"]["RECIPIENTS"], message)
