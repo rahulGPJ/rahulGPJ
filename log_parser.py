@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 
 def extract_batch_details(log_file):
-    """ Reads logs from TWS and extracts batch job details. """
+    """Reads logs and extracts batch details (start time, end time, and data size)."""
     with open(log_file, 'r') as file:
         logs = file.readlines()
 
