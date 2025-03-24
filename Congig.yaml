@@ -1,12 +1,22 @@
 TWS_LOG_PATH: "logs/tws_batch_logs.log"
 
-ALERT_THRESHOLD:
-  MINOR: 10   # % delay
-  MAJOR: 20   # % delay → Netcool Alert
-  CRITICAL: 50 # % delay → xMatters Escalation
+ALERT_THRESHOLDS:
+  MINOR: 10    # Delay >10% (No action required)
+  MAJOR: 20    # Delay >20% (Netcool alert)
+  CRITICAL: 50 # Delay >50% (xMatters escalation)
 
-EMAIL_SETTINGS:
+NETCOOL:
+  URL: "https://netcool.example.com/api/v1/alerts"
+  USERNAME: "netcool_user"
+  PASSWORD: "secure_password"
+
+XMATTERS:
+  URL: "https://xmatter.example.com/api/v1/trigger"
+  API_KEY: "your_xmatters_api_key"
+
+EMAIL:
   SMTP_SERVER: "smtp.example.com"
-  SMTP_PORT: 587
-  SENDER_EMAIL: "alerts@example.com"
-  RECEIVER_EMAIL: "production_team@example.com"
+  PORT: 587
+  SENDER: "alerts@example.com"
+  RECIPIENTS: ["production_team@example.com"]
+  PASSWORD: "email_password"
