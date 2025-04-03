@@ -1,1 +1,1 @@
-echo "$CURRENT_DT_FILE_LIST" | awk -F ' move_lambda_' '{print $1}' | sed -E 's/^npe_//' | sed -E 's/_cdc$//'
+echo "$CURRENT_DT_FILE_LIST" | awk -F ' move_lambda_' '{print $1}' | sed -E 's/^npe_//' | awk -F '_cdc' '{print $1}'
