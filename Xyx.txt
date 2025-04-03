@@ -1,1 +1,1 @@
-echo "$CURRENT_DT_FILE_LIST" | tr -d '\n' | awk -F "${SRC_SYS_NAME}_" '{print $2}' | awk -F ' move_lambda_' '{print $1}'
+echo "$CURRENT_DT_FILE_LIST" | awk -F ' move_lambda_' '{print $1}' | sed -E 's/^npe_//' | sed -E 's/_cdc$//'
