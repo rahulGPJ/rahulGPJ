@@ -1,1 +1,2 @@
-echo "$CURRENT_DT_FILE_LIST" | awk -F ' move_lambda_' '{print $1}' | sed -E 's/^npe_//' | awk -F '_cdc' '{print $1}'
+aws sns publish --topic-arn arn:aws:sns:region:account-id:BatchJobAlerts \
+--message '{"batch_name": "Batch_Job_123", "reason": "Job failed due to timeout"}'
