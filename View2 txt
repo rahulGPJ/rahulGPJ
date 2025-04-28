@@ -1,0 +1,36 @@
+import pandas as pd
+
+# Example View 1 data (coming from your team)
+data_view1 = {
+    'AppName': ['sphublpmp', 'sphublpmp', 'sphublpmp', 'bacsbuk', 'bacsbuk'],
+    'Process': ['Date Control', 'CRACC', 'Mesh', 'Date Control', 'CRACC'],
+    'StartTime': ['04:00', '04:04', '09:02', '11:00', '11:06'],
+    'EndTime': ['04:03', '04:50', '09:20', '11:05', '11:50']
+}
+
+# Create DataFrame
+df_view1 = pd.DataFrame(data_view1)
+
+# Convert StartTime and EndTime to datetime
+df_view1['StartTime'] = pd.to_datetime(df_view1['StartTime'], format='%H:%M')
+df_view1['EndTime'] = pd.to_datetime(df_view1['EndTime'], format='%H:%M')
+
+# Calculate Job Duration in minutes
+df_view1['JobDuration'] = (df_view1['EndTime'] - df_view1['StartTime']).dt.total_seconds() / 60
+
+# Group by AppName and Process to calculate averages
+view2 = df_view1.groupby(['AppName', 'Process']).agg(
+    AvgProcessStartTime=('StartTime', lambda x: (pd.to_datetime(x).dt.hour*60 + pd.to_datetime(x).dt.minute).mean()),
+    AvgProcessEndTime=('EndTime', lambda x: (pd.to_datetime(x).dt.hour*60 + pd.to_datetime(x).dt.minute).mean()),
+    AvgJobDuration=('JobDuration', 'mean')
+).reset_index()
+
+# Convert AvgProcessStartTime and AvgProcessEndTime back to HH:MM format
+view2['AvgProcessStartTime'] = view2['AvgProcessStartTime'].apply(lambda x: f"{int(x//60):02}:{int(x%60):02}")
+view2['AvgProcessEndTime'] = view2['AvgProcessEndTime'].apply(lambda x: f"{int(x//60):02}:{int(x%60):02}")
+
+# Format AvgJobDuration nicely
+view2['AvgJobDuration'] = view2['AvgJobDuration'].apply(lambda x: f"{int(x)}mins")
+
+# Final output
+print(view2)
