@@ -1,0 +1,59 @@
+Barclays Performance Review - The What & The How Sections
+
+Box 1: The What – Achievements in relation to objectives
+
+This year, I successfully completed the end-to-end development and production release of the Partner Bank applications — NPE and NPS.
+
+For the NPE application, I delivered all three tranches, while for NPS, I completed two tranches, ensuring smooth delivery, testing, and production rollout.
+
+I also completed the development and SIT phase of the SPHIBRDA application, contributing to successful milestone achievement for our team.
+
+In addition to project work, I designed and implemented a generic housekeeping solution on the BVP server, which automated cleanup tasks and improved overall efficiency.
+
+I proactively resolved late alerting issues for multiple critical applications including BONY, HVPUE, HVPUS, FISERV, and LoaniqUS, ensuring timely monitoring and reducing incident risks.
+
+I also provided SIT, OAT, and RPOD support for various projects, maintaining operational stability and ensuring adherence to timelines.
+
+Alongside delivery work, I completed several technical certifications and learning programs, further enhancing my knowledge and productivity.
+
+Overall, my contributions strengthened platform reliability, improved automation, and supported timely, high-quality releases across multiple applications.
+
+
+Box 2: Precision in our operations, risk management and controls
+
+I maintained a strong focus on operational precision, control, and governance throughout development and deployment cycles.
+
+All changes were implemented following Barclays’ risk and control frameworks, with thorough peer reviews, SIT validation, and production readiness checks.
+
+The generic housekeeping automation and late alerting fixes significantly reduced manual intervention, improved job monitoring, and minimized production risks.
+
+During SIT, OAT, and RPOD, I ensured proper testing and verification of job dependencies, control points, and data consistency.
+
+I proactively communicated potential risks, collaborated with peers and leads to mitigate issues, and ensured that all releases met Barclays’ quality and compliance standards.
+
+
+The How – Values, Behaviours and Mindset
+
+Ownership & Accountability:
+I took full ownership of my deliverables, from design and development through to production release and post-production support. I proactively tracked issues, ensured follow-through on fixes, and accepted responsibility for outcomes.
+
+Collaboration & Communication:
+I actively collaborated with peers, testing teams, and stakeholders during SIT, OAT, and RPOD to ensure smooth coordination. I maintained clear, timely communication and escalated risks when needed to prevent delays.
+
+Innovation & Continuous Improvement:
+I implemented the generic housekeeping solution on the BVP server to automate manual tasks and improve system health. I also fixed late alerting issues to make monitoring more reliable—both efforts demonstrate a mindset of improving efficiency and reducing operational load.
+
+Quality & Discipline:
+I adhered to Barclays’ development and governance standards, including peer code review, testing protocols, and production readiness checks. This disciplined approach helped prevent defects and ensured consistent delivery quality.
+
+Problem Solving & Resilience:
+I resolved complex late alerting and monitoring issues across multiple applications, requiring investigative analysis, coordination with cross-functional teams, and iterative testing. I remained resilient under pressure to meet release timelines.
+
+Learning & Growth:
+I completed technical certifications and training courses to strengthen my skills. I applied new learnings to improve automation and monitoring, demonstrating commitment to personal and team development.
+
+Service & Customer Focus:
+I prioritized application stability and user impact by ensuring timely releases and reliable monitoring. My work reduced the need for manual interventions and improved the operational experience for support teams and users alike.
+
+Overall Summary of How I Worked:
+I combined strong ownership, clear communication, disciplined processes, and continuous improvement to deliver dependable systems and operational efficiencies. I consistently aligned my behaviours to Barclays’ values—respect, integrity, service, excellence, and stewardship—and collaborated to achieve team goals.
